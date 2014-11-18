@@ -8,18 +8,20 @@ import matplotlib.dates as mdates
 import numpy as np
 from matplotlib.font_manager import FontProperties
 from pprint import pprint
+import csv
 
 
 def totalWATCbydate():
     date_dict = {}
-    watc = open("WATC.txt", "r")
-    while True:
-        raw_line = watc.readline()
-        if "\n" not in raw_line:
-            break
-        else:
-            raw_line = raw_line[:-1]
-            line = raw_line.split("-")
+    with open("WATC_diversity_data.csv", "r") as watc:
+        watcreader = csv.DictReader(watc)
+        while True:
+            raw_line = watc.readline()
+            if "\n" not in raw_line:
+                break
+            else:
+                raw_line = raw_line[:-1]
+                line = raw_line.split("-")
             if line[0] not in date_dict:
                 indv_date = date_dict[(line[0])] = [0,0,0,0,0]
             line_length = len(line) - 1
@@ -35,6 +37,7 @@ def totalWATCbydate():
                     indv_date[2] += 1
                 elif guest[2] == "F":
                     indv_date[3] += 1
+        watcreader.close()
     return date_dict
 
 
