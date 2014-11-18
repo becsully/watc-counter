@@ -1,9 +1,9 @@
-__author__ = 'bsullivan'
-
-
+from __future__ import division
 import csv
 import ast
 from pprint import pprint
+import datetime
+from collections import Counter
 
 
 def is_guest(guest):
@@ -16,6 +16,12 @@ def is_guest(guest):
             return True
         else:
             return False
+
+
+def percent_of(num,total):
+    raw_percent = num / total
+    percent = round((raw_percent * 100),1)
+    return percent
 
 
 def watc_allguests():
@@ -153,4 +159,32 @@ def showWATCbydate():
     return date_dict
 
 
-pprint(showWATCbydate())
+def watcbymonth(date_dict):
+    month_by_number = {}
+    month_by_percent = {}
+    for key in date_dict:
+        raw_date = datetime.datetime.strptime(key,"%y%m%d")
+        month = datetime.datetime.strftime(raw_date, "%m%y")
+        if month not in month_by_number:
+            month_by_number[month] = {"White men":0, "White women":0, "Men of color":0, "Women of color":0,
+                                     "Unknown men":0,"Unknown women":0,"Total":0}
+        dict1 = Counter(month_by_number[month])
+        dict2 = Counter(date_dict[key])
+        month_Counter = dict1 + dict2
+        month_by_number[month] = dict(month_Counter)
+    for month in month_by_number:
+        month_by_percent[month] = {"White men":0, "White women":0, "Men of color":0, "Women of color":0,
+                                 "Unknown men":0,"Unknown women":0,"Total":0}
+        for demographic in month_by_number[month]:
+            try:
+                firstnum = (month_by_number[month])[demographic]
+                secondnum = (month_by_number[month])["Total"]
+                percent = percent_of(firstnum,secondnum)
+                (month_by_percent[month])[demographic] = percent
+            except KeyError:
+                pass
+            month_by_percent[month].pop("Total",None)
+    return month_by_percent
+
+
+pprint(watcbymonth(showWATCbydate()))

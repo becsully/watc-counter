@@ -9,66 +9,85 @@ import numpy as np
 from matplotlib.font_manager import FontProperties
 from pprint import pprint
 import csv
+import ast
 
 
 def totalWATCbydate():
     date_dict = {}
     with open("WATC_diversity_data.csv", "r") as watc:
         watcreader = csv.DictReader(watc)
-        while True:
-            raw_line = watc.readline()
-            if "\n" not in raw_line:
-                break
+        for row in watcreader:
+            if row["Date"] == "Date":
+                pass
             else:
-                raw_line = raw_line[:-1]
-                line = raw_line.split("-")
-            if line[0] not in date_dict:
-                indv_date = date_dict[(line[0])] = [0,0,0,0,0]
-            line_length = len(line) - 1
-            indv_date[4] += int(line[5])
-    ##guest analysis
-            for i in range(line_length,5,-1):
-                guest = line[i]
-                if guest == "W,M":
-                    indv_date[0] += 1
-                elif guest == "W,F":
-                    indv_date[1] += 1
-                elif guest[2] == "M":
-                    indv_date[2] += 1
-                elif guest[2] == "F":
-                    indv_date[3] += 1
-        watcreader.close()
+                if row["Date"] not in date_dict:
+                    date_dict[(row["Date"])] = {"White men":0, "White women":0, "Men of color":0, "Women of color":0,
+                                                "Unknown men":0,"Unknown women":0,"Total":0}
+                indv_date = date_dict[(row["Date"])]
+                raw_guests = row["Guest info"]
+                guest_list = ast.literal_eval(raw_guests)
+                for guest in guest_list:
+                    if is_guest(guest):
+                        indv_date["Total"] += 1
+                        non_white = ['B', 'L', 'A', 'M']
+                        race = guest[0]
+                        gender = guest[2]
+                        if guest == "W,M":
+                            indv_date["White men"] += 1
+                        if guest == "W,F":
+                            indv_date["White women"] += 1
+                        if race in non_white and gender == "M":
+                            indv_date["Men of color"] += 1
+                        if race in non_white and gender == "F":
+                            indv_date["Women of color"] += 1
+                        if guest == "O,M":
+                            indv_date["Unknown men"] += 1
+                        if guest == "O,F":
+                            indv_date["Unknown women"] += 1
+                    else:
+                        pass
+        watc.close()
     return date_dict
 
 
 def showWATCbydate():
     date_dict = {}
-    watc = open("WATC.txt", "r")
-    while True:
-        raw_line = watc.readline()
-        if "\n" not in raw_line:
-            break
-        else:
-            raw_line = raw_line[:-1]
-            line = raw_line.split("-")
-            if line[0] not in date_dict:
-                indv_date = date_dict[(line[0])] = [0,0,0,0,0,0]
-            if line[3] == "S":
-                line_length = len(line) - 1
-                indv_date[5] += int(line[5])
-                for i in range(line_length,5,-1):
-                    guest = line[i]
-                    if guest == "W,M":
-                        indv_date[0] += 1
-                    elif guest == "W,F":
-                        indv_date[1] += 1
-                    elif guest[0] == "O":
-                        indv_date[4] += 1
-                    elif guest[2] == "M":
-                        indv_date[2] += 1
-                    elif guest[2] == "F":
-                        indv_date[3] += 1
-            else: pass
+    with open("WATC_diversity_data.csv", "r") as watc:
+        watcreader = csv.DictReader(watc)
+        for row in watcreader:
+            if row["Date"] == "Date":
+                pass
+            else:
+                if row["Origin"] == "D":
+                    pass
+                if row["Origin"] == "S":
+                    if row["Date"] not in date_dict:
+                        date_dict[(row["Date"])] = {"White men":0, "White women":0, "Men of color":0, "Women of color":0,
+                                                    "Unknown men":0,"Unknown women":0,"Total":0}
+                    indv_date = date_dict[(row["Date"])]
+                    raw_guests = row["Guest info"]
+                    guest_list = ast.literal_eval(raw_guests)
+                    for guest in guest_list:
+                        if is_guest(guest):
+                            indv_date["Total"] += 1
+                            non_white = ['B', 'L', 'A', 'M']
+                            race = guest[0]
+                            gender = guest[2]
+                            if guest == "W,M":
+                                indv_date["White men"] += 1
+                            if guest == "W,F":
+                                indv_date["White women"] += 1
+                            if race in non_white and gender == "M":
+                                indv_date["Men of color"] += 1
+                            if race in non_white and gender == "F":
+                                indv_date["Women of color"] += 1
+                            if guest == "O,M":
+                                indv_date["Unknown men"] += 1
+                            if guest == "O,F":
+                                indv_date["Unknown women"] += 1
+                        else:
+                            pass
+        watc.close()
     return date_dict
 
 
