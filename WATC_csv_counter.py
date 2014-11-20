@@ -47,6 +47,7 @@ def is_number(num,things):
             else:
                 return False
 
+
 def is_guest(guest):
     races = ['W', 'B', 'L', 'A', 'M', 'O']
     genders = ['M', 'F']
@@ -66,8 +67,11 @@ def is_slug(slug):
         return True
 
         
-def is_date(raw_date):
-    start = date(2013, 9, 21)
+def is_date(raw_date,reason):
+    if reason == "entry":
+        start = date(2013, 9, 21)
+    elif reason == "fixing":
+        start = earliestshow()
     end = date.today()
     try:
         raw_date2 = datetime.strptime(raw_date,"%y%m%d")
@@ -194,7 +198,7 @@ def enter_shows():
         date_bool = False
         while date_bool == False:
             date = raw_input("Type the date of the show you'd like to add. YYMMDD ")
-            if is_date(date):
+            if is_date(date,"entry"):
                 entry.append(create_show(date))
                 date_bool = True
             else:
@@ -363,6 +367,28 @@ def latestshow():
     return date_list[0]
 
 
+def fix_something():
+    date_bool = False
+    while date_bool == False:
+        raw_date = raw_input("What date are we talking here? (YYMMDD): ")
+        if is_date(raw_date,"fixing"):
+            date_bool = True
+        else:
+            print "YYMMDD please, and make sure it's a date you've already entered."
+            date_bool = False
+    print "OK! Which story do you want to fix?"
+    count = 0
+    with open('WATC_Diversity_data.csv','r') as watc_csv:
+        watc_reader = csv.DictReader(watc_csv)
+        for row in watc_reader:
+            if row["Date"] != raw_date:
+                pass
+            elif row["Date"] == raw_date:
+                count += 1
+                print str(count) + ". " + row["Slug"]
+        watc_csv.close()
+
+
 ## WATC Counter basic interactive program
 print """
 Welcome to the WATC Counter!
@@ -377,11 +403,12 @@ while keep_going:
     3. Print the show-only data (no desk pieces)
     4. What's the earliest show in the list?
     5. What's the latest show in the list?
-    6. Back up the list
-    7. Quit
+    6. Fix something
+    7. Back up the list
+    8. Quit
     """
-    selection = int(raw_input("Please choose (1-6): "))
-    if selection == 1 or 2 or 3 or 4 or 5 or 6:
+    selection = int(raw_input("Please choose (1-8): "))
+    if selection == 1 or 2 or 3 or 4 or 5 or 6 or 7:
         if selection == 1:
             enter_shows()
         elif selection == 2:
@@ -393,8 +420,10 @@ while keep_going:
         elif selection == 5:
             print latestshow()
         elif selection == 6:
+            fix_something()
+        elif selection == 7:
             backup()
         keep_going = True
-    if selection == 7:
+    if selection == 8:
         keep_going = False
         
