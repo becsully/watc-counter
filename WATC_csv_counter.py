@@ -595,6 +595,7 @@ def fix_something():
         replace_data(new_row)
 
 
+# separate function for tempfile replacement
 def replace_data(newrow):
     filename = 'WATC_testing.csv'
     tempfile = NamedTemporaryFile(delete=False)
