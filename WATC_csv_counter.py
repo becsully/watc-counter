@@ -592,24 +592,29 @@ def fix_something():
         new_row = []
         for category in headers:
             new_row.append(selection[category])
+        replace_data(new_row)
 
-        print new_row
 
+def replace_data(newrow):
     filename = 'WATC_testing.csv'
-    secondfile = 'WATC_testing2.csv'
-    #tempfile = NamedTemporaryFile(delete=False)
+    tempfile = NamedTemporaryFile(delete=False)
 
-    with open(filename, 'rb') as csvFile:
-        reader = csv.reader(csvFile)
-        writer = csv.writer(secondfile)
+    with open(filename, 'rb') as csvFile, tempfile:
+        reader = csv.reader(csvFile, delimiter=',', quotechar='"')
+        writer = csv.writer(tempfile, delimiter=',', quotechar='"')
 
         for row in reader:
-            if row[0] == new_row[0] and row[2] == new_row[2]:
-                writer.writerow(new_row)
+            if row == []:
+                pass
+            if row[0] == newrow[0] and row[1] == newrow[1]:
+                print "OLD: " + row
+                print "NEW: " + newrow
+                print "*" * 5
+                writer.writerow(newrow)
             else:
                 writer.writerow(row)
 
-    #shutil.move(tempfile.name, filename)
+    shutil.move(tempfile.name, filename)
 
     print "DONE!!!!"
 
