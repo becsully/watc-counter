@@ -517,7 +517,7 @@ def fix_something():
     print "OK! Here were the stories that day."
     count = 0
     sluglist = []
-    with open('WATC_testing.csv', 'r') as watc_csv:
+    with open('WATC_Diversity_data.csv', 'r') as watc_csv:
         watc_reader = csv.DictReader(watc_csv)
         for row in watc_reader:
             if row["Date"] != raw_date:
@@ -543,7 +543,7 @@ def fix_something():
             choice_bool = False
     story = sluglist[choice]
 
-    with open('WATC_testing.csv', 'r') as watc_csv:
+    with open('WATC_Diversity_data.csv', 'r') as watc_csv:
         watc_reader = csv.DictReader(watc_csv)
         for row in watc_reader:
             if row["Slug"] == story and row["Date"] == raw_date:
@@ -597,7 +597,7 @@ def fix_something():
 
 # separate function for tempfile replacement
 def replace_data(newrow):
-    filename = 'WATC_testing.csv'
+    filename = 'WATC_Diversity_data.csv'
     tempfile = NamedTemporaryFile(delete=False)
 
     with open(filename, 'rb') as csvFile, tempfile:
@@ -608,8 +608,10 @@ def replace_data(newrow):
             if row == []:
                 pass
             if row[0] == newrow[0] and row[1] == newrow[1]:
-                print "OLD: " + row
-                print "NEW: " + newrow
+                print "OLD: ",\
+                pprint(row)
+                print "NEW: ",\
+                pprint(newrow)
                 print "*" * 5
                 writer.writerow(newrow)
             else:
