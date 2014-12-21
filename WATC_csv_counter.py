@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Nov 10 12:59:37 2014
-
-@author: bsullivan
-"""
-
 from __future__ import division
 from datetime import datetime, date
 import csv
@@ -623,40 +616,43 @@ def replace_data(newrow):
 
 
 ## WATC Counter basic interactive program
-print """
-Welcome to the WATC Counter!
-What would you like to do?"""
-
-keep_going = True
-selection = 0
-while keep_going:
+def main():
     print """
-    1. Enter show(s)
-    2. Print the total show data
-    3. Print the show-only data (no desk pieces)
-    4. What's the earliest show in the list?
-    5. What's the latest show in the list?
-    6. Fix something
-    7. Back up the list
-    8. Quit
-    """
-    selection = int(raw_input("Please choose (1-8): "))
-    if selection == 1 or 2 or 3 or 4 or 5 or 6 or 7:
-        if selection == 1:
-            enter_shows()
-        elif selection == 2:
-            printer("total")
-        elif selection == 3:
-            printer("show")
-        elif selection == 4:
-            print earliestshow()
-        elif selection == 5:
-            print latestshow()
-        elif selection == 6:
-            fix_something()
-        elif selection == 7:
-            backup()
-        keep_going = True
-    if selection == 8:
-        keep_going = False
-        
+    Welcome to the WATC Counter!
+    What would you like to do?"""
+
+    keep_going = True
+    while keep_going:
+        print """
+        1. Enter show(s)
+        2. Print the total show data
+        3. Print the show-only data (no desk pieces)
+        4. What's the earliest show in the list?
+        5. What's the latest show in the list?
+        6. Fix something
+        7. Back up the list
+        8. Quit
+        """
+        selection = int(raw_input("Please choose (1-8): "))
+        if selection == 1 or 2 or 3 or 4 or 5 or 6 or 7:
+            if selection == 1:
+                enter_shows()
+            elif selection == 2:
+                printer("total")
+            elif selection == 3:
+                printer("show")
+            elif selection == 4:
+                print earliestshow()
+            elif selection == 5:
+                print latestshow()
+            elif selection == 6:
+                fix_something()
+            elif selection == 7:
+                backup()
+            keep_going = True
+        if selection == 8:
+            keep_going = False
+
+
+if __name__ == "__main__":
+    main()
