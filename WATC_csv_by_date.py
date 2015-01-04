@@ -1,6 +1,3 @@
-__author__ = 'bsullivan'
-
-
 from __future__ import division
 import datetime
 import matplotlib.pyplot as plt
@@ -10,6 +7,80 @@ from matplotlib.font_manager import FontProperties
 from pprint import pprint
 import csv
 import ast
+from collections import Counter
+
+
+def is_guest(guest):
+    races = ['W', 'B', 'L', 'A', 'M', 'O']
+    genders = ['M', 'F']
+    if len(guest) != 3:
+        return False
+    else:
+        if (guest[0] in races) and (guest[2] in genders):
+            return True
+        else:
+            return False
+
+
+def percent_of(num,total):
+    raw_percent = num / total
+    percent = round((raw_percent * 100),1)
+    return percent
+
+
+def watc_allguests():
+    count = {'Total': 0, 'W': 0, 'B': 0, 'L': 0, 'A': 0, 'M': 0, 'O': 0, 'Men': 0, 'Women': 0}
+    with open('WATC_diversity_data.csv','r') as watc_csv:
+        watc_reader = csv.reader(watc_csv)
+        for row in watc_reader:
+            if row[0] == "Date":
+                pass
+            else:
+                count['Total'] += int(row[5])
+                raw_guests = row[6]
+                if raw_guests == "":
+                    pass
+                else:
+                    guest_list = raw_guests.split('/')
+                    for guest in guest_list:
+                        count[(guest[0])] += 1
+                        if guest[2] == "M":
+                            count['Men'] += 1
+                        if guest[2] == "W":
+                            count['Women'] += 1
+                        if guest in count:
+                            count[guest] += 1
+                        else:
+                            count[guest] = 1
+        watc_csv.close()
+    return count
+
+
+def watc_showguests():
+    count = {'Total': 0, 'W': 0, 'B': 0, 'L': 0, 'A': 0, 'M': 0, 'O': 0, 'Men': 0, 'Women': 0}
+    with open('WATC_diversity_data.csv','r') as watc_csv:
+        watc_reader = csv.reader(watc_csv)
+        for row in watc_reader:
+            if row[0] == "Date":
+                pass
+            if row[3] == "S":
+                count['Total'] += int(row[5])
+                raw_guests = row[6]
+                guest_list = raw_guests.split('/')
+                for guest in guest_list:
+                    count[(guest[0])] += 1
+                    if guest[2] == "M":
+                        count['Men'] += 1
+                    if guest[2] == "W":
+                        count['Women'] += 1
+                    if guest in count:
+                        count[guest] += 1
+                    else:
+                        count[guest] = 1
+            else:
+                pass
+        watc_csv.close()
+    return count
 
 
 def totalWATCbydate():
@@ -22,7 +93,7 @@ def totalWATCbydate():
             else:
                 if row["Date"] not in date_dict:
                     date_dict[(row["Date"])] = {"White men":0, "White women":0, "Men of color":0, "Women of color":0,
-                                                "Unknown men":0,"Unknown women":0,"Total":0}
+                                                "Unknown men":0, "Unknown women":0, "Total":0}
                 indv_date = date_dict[(row["Date"])]
                 raw_guests = row["Guest info"]
                 guest_list = ast.literal_eval(raw_guests)
@@ -91,13 +162,7 @@ def showWATCbydate():
     return date_dict
 
 
-def Percent(num,total):
-    raw_percent = num / total
-    percent = round((raw_percent * 100),1)
-    return percent
-
-
-def DateLineGraph(date_dict):
+def date_line_graph(date_dict):
     x = []
     y_series_0 = []
     y_series_1 = []
@@ -105,9 +170,9 @@ def DateLineGraph(date_dict):
     for k in sorted(date_dict):
         date = datetime.datetime.strptime(k,"%y%m%d")
         x.append(date)
-        percent_0 = Percent((date_dict[k])[0],(date_dict[k])[3])
-        percent_1 = Percent((date_dict[k])[1],(date_dict[k])[3])
-        percent_2 = Percent((date_dict[k])[2],(date_dict[k])[3])
+        percent_0 = percent_of((date_dict[k])[0],(date_dict[k])[3])
+        percent_1 = percent_of((date_dict[k])[1],(date_dict[k])[3])
+        percent_2 = percent_of((date_dict[k])[2],(date_dict[k])[3])
         y_series_0.append(percent_0)
         y_series_1.append(percent_1)
         y_series_2.append(percent_2)
@@ -127,7 +192,7 @@ def DateLineGraph(date_dict):
     plt.show()
 
 
-def DateBarGraph(date_dict):
+def date_bar_graph(date_dict):
     num = range(len(date_dict))
     dates = []
     white_men = []
@@ -138,10 +203,10 @@ def DateBarGraph(date_dict):
         raw_date = datetime.datetime.strptime(k,"%y%m%d")
         date = datetime.datetime.strftime(raw_date, "%b %d")
         dates.append(date)
-        percent_0 = Percent((date_dict[k])[0],(date_dict[k])[4])
-        percent_1 = Percent((date_dict[k])[1],(date_dict[k])[4])
-        percent_2 = Percent((date_dict[k])[2],(date_dict[k])[4])
-        percent_3 = Percent((date_dict[k])[3],(date_dict[k])[4])
+        percent_0 = percent_of((date_dict[k])[0],(date_dict[k])[4])
+        percent_1 = percent_of((date_dict[k])[1],(date_dict[k])[4])
+        percent_2 = percent_of((date_dict[k])[2],(date_dict[k])[4])
+        percent_3 = percent_of((date_dict[k])[3],(date_dict[k])[4])
         white_men.append(percent_0)
         white_women.append(percent_1)
         men_of_color.append(percent_2)
@@ -193,30 +258,36 @@ def DateBarGraph(date_dict):
 
     plt.show()
 
-def WatcByMonth(date_dict):
-    month_dict_num = {}
-    month_dict_percent = {}
+
+def watc_by_month(date_dict):
+    month_by_number = {}
+    month_by_percent = {}
     for key in date_dict:
         raw_date = datetime.datetime.strptime(key,"%y%m%d")
         month = datetime.datetime.strftime(raw_date, "%m%y")
-        if month not in month_dict_num:
-            month_dict_num[month] = [0,0,0,0,0,0]
-        list1 = month_dict_num[month]
-        list2 = [(date_dict[key])[0], (date_dict[key])[1], (date_dict[key])[2],
-                 (date_dict[key])[3], (date_dict[key])[4], (date_dict[key])[5]]
-        month_dict_num[month] = [x + y for x, y in zip(list1, list2)]
-    for key in month_dict_num:
-        percent_0 = Percent((month_dict_num[key])[0],(month_dict_num[key])[5])
-        percent_1 = Percent((month_dict_num[key])[1],(month_dict_num[key])[5])
-        percent_2 = Percent((month_dict_num[key])[2],(month_dict_num[key])[5])
-        percent_3 = Percent((month_dict_num[key])[3],(month_dict_num[key])[5])
-        percent_4 = Percent((month_dict_num[key])[4],(month_dict_num[key])[5])
-        month_dict_percent[key] = [percent_0, percent_1, percent_2, percent_3, percent_4]
-    return month_dict_percent
+        if month not in month_by_number:
+            month_by_number[month] = {"White men":0, "White women":0, "Men of color":0, "Women of color":0,
+                                     "Unknown men":0,"Unknown women":0,"Total":0}
+        dict1 = Counter(month_by_number[month])
+        dict2 = Counter(date_dict[key])
+        month_Counter = dict1 + dict2
+        month_by_number[month] = dict(month_Counter)
+    for month in month_by_number:
+        month_by_percent[month] = {"White men":0, "White women":0, "Men of color":0, "Women of color":0,
+                                 "Unknown men":0,"Unknown women":0,"Total":0}
+        for demographic in month_by_number[month]:
+            try:
+                firstnum = (month_by_number[month])[demographic]
+                secondnum = (month_by_number[month])["Total"]
+                percent = percent_of(firstnum,secondnum)
+                (month_by_percent[month])[demographic] = percent
+            except KeyError:
+                pass
+            month_by_percent[month].pop("Total",None)
+    return month_by_percent
 
 
-
-def MonthBarGraph(month_dict):
+def old_month_bar_graph(month_dict):
     num = range(len(month_dict))
     dates = []
     white_men = []
@@ -283,8 +354,7 @@ def MonthBarGraph(month_dict):
     plt.show()
 
 
-
-def MonthBarGraphTest(month_dict):
+def month_bar_graph(month_dict):
     num = range(len(month_dict))
     dates = []
     white_men = []
@@ -303,11 +373,11 @@ def MonthBarGraphTest(month_dict):
         dates.append(month)
         raw_month = datetime.datetime.strptime(month,"%m%y")
         month_names.append(datetime.datetime.strftime(raw_month, "%B"))
-        white_men.append((month_dict[month])[0])
-        white_women.append((month_dict[month])[1])
-        men_of_color.append((month_dict[month])[2])
-        women_of_color.append((month_dict[month])[3])
-        unknown.append((month_dict[month])[4])
+        white_men.append((month_dict[month])["White men"])
+        white_women.append((month_dict[month])["White women"])
+        men_of_color.append((month_dict[month])["Men of color"])
+        women_of_color.append((month_dict[month])["Women of color"])
+        unknown.append((month_dict[month])["Unknown men"] + (month_dict[month])["Unknown women"])
 
     y_wm = np.array(white_men)
     y_ww = np.array(white_women)
@@ -360,8 +430,47 @@ def MonthBarGraphTest(month_dict):
     plt.show()
 
 
+def main():
+    print "WELCOME TO THE WATC BY DATE GRAPHER"
+    print
+    while True:
+        print "1. Print a bar graph (NEW) of the monthly data, with unknowns."
+        print "2. Print a bar graph (OLD) of the monthly data, minus unknowns."
+        print "3. Print a bar graph of the daily data. (NEEDS UPDATE)"
+        print "4. Print a line graph of the daily data. (NEEDS UPDATE)"
+        print "5. Quit"
+        choice1, choice2 = raw_input("Choose an option 1-5: "), raw_input('Do you want "show" data or "total" data? ')
+        if choice1 == "1":
+            if choice2 == "show":
+                month_bar_graph(watc_by_month(showWATCbydate()))
+            elif choice2 == "total":
+                month_bar_graph(watc_by_month(totalWATCbydate()))
+            else:
+                print "Invalid choice.\n"
+        elif choice1 == "2":
+            if choice2 == "show":
+                old_month_bar_graph(watc_by_month(showWATCbydate()))
+            elif choice2 == "total":
+                old_month_bar_graph(watc_by_month(totalWATCbydate()))
+            else:
+                print "Invalid choice.\n"
+        elif choice1 == "3":
+            if choice2 == "show":
+                date_bar_graph(showWATCbydate())
+            elif choice2 == "total":
+                date_bar_graph(totalWATCbydate())
+            else:
+                print "Invalid choice.\n"
+        elif choice1 == "4":
+            if choice2 == "show":
+                date_line_graph(showWATCbydate())
+            elif choice2 == "total":
+                date_line_graph(totalWATCbydate())
+            else:
+                print "Invalid choice.\n"
+        else:
+            break
 
-print WatcShowByDate()
-date_dict = WatcByMonth(WatcShowByDate())
-pprint(date_dict)
-print MonthBarGraphTest(date_dict)
+
+if __name__ == "__main__":
+    pprint(totalWATCbydate())

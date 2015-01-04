@@ -496,7 +496,7 @@ def update_producer():
 
 # allows for line-by-line fixing.
 def fix_something():
-    headers = ['Date','Order','Slug','Origin','Producer','Guest number','Guest info']
+    headers = ['Date', 'Order', 'Slug', 'Origin', 'Producer', 'Guest number', 'Guest info']
 
     date_bool = False
     while date_bool == False:
@@ -551,7 +551,7 @@ def fix_something():
     keep_going = True
     while keep_going:
         choice_bool2 = False
-        while choice_bool2 == False:
+        while choice_bool2 is False:
             choice = raw_input("Which of these things needs fixing? (Pick Guest number to add/remove guests.) ")
             if choice in selection:
                 choice_bool2 = True
@@ -615,7 +615,7 @@ def replace_data(newrow):
     print "DONE!!!!"
 
 
-## WATC Counter basic interactive program
+# WATC Counter basic interactive program
 def main():
     print """
     Welcome to the WATC Counter!
