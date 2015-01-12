@@ -619,10 +619,8 @@ def replace_data(newrow):
 def main():
     print """
     Welcome to the WATC Counter!
-    What would you like to do?"""
-
-    keep_going = True
-    while keep_going:
+    What would you like to do?\n"""
+    while True:
         print """
         1. Enter show(s)
         2. Print the total show data
@@ -634,24 +632,22 @@ def main():
         8. Quit
         """
         selection = int(raw_input("Please choose (1-8): "))
-        if selection == 1 or 2 or 3 or 4 or 5 or 6 or 7:
-            if selection == 1:
-                enter_shows()
-            elif selection == 2:
-                printer("total")
-            elif selection == 3:
-                printer("show")
-            elif selection == 4:
-                print earliestshow()
-            elif selection == 5:
-                print latestshow()
-            elif selection == 6:
-                fix_something()
-            elif selection == 7:
-                backup()
-            keep_going = True
-        if selection == 8:
-            keep_going = False
+        if selection == 1:
+            enter_shows()
+        elif selection == 2:
+            printer("total")
+        elif selection == 3:
+            printer("show")
+        elif selection == 4:
+            print earliestshow()
+        elif selection == 5:
+            print latestshow()
+        elif selection == 6:
+            fix_something()
+        elif selection == 7:
+            backup()
+        else:
+            break
 
 
 if __name__ == "__main__":

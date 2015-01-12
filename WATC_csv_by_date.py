@@ -264,7 +264,7 @@ def watc_by_month(date_dict):
     month_by_percent = {}
     for key in date_dict:
         raw_date = datetime.datetime.strptime(key,"%y%m%d")
-        month = datetime.datetime.strftime(raw_date, "%m%y")
+        month = datetime.datetime.strftime(raw_date, "%y%m")
         if month not in month_by_number:
             month_by_number[month] = {"White men":0, "White women":0, "Men of color":0, "Women of color":0,
                                      "Unknown men":0,"Unknown women":0,"Total":0}
@@ -302,7 +302,7 @@ def old_month_bar_graph(month_dict):
 
     for month in sorted.month_dict:
         dates.append(month)
-        raw_month = datetime.datetime.strptime(month,"%m%y")
+        raw_month = datetime.datetime.strptime(month,"%y%m")
         month_names.append(datetime.datetime.strftime(raw_month, "%B"))
         white_men.append((month_dict[month])[0])
         white_women.append((month_dict[month])[1])
@@ -371,7 +371,7 @@ def month_bar_graph(month_dict):
 
     for month in sorted(month_dict):
         dates.append(month)
-        raw_month = datetime.datetime.strptime(month,"%m%y")
+        raw_month = datetime.datetime.strptime(month,"%y%m")
         month_names.append(datetime.datetime.strftime(raw_month, "%B"))
         white_men.append((month_dict[month])["White men"])
         white_women.append((month_dict[month])["White women"])
@@ -473,4 +473,4 @@ def main():
 
 
 if __name__ == "__main__":
-    pprint(totalWATCbydate())
+    main()
